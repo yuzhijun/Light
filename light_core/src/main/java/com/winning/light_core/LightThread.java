@@ -29,7 +29,6 @@ public class LightThread extends Thread {
     private long mSaveTime; //存储时间
     private long mMaxLogFile;//最大文件大小
     private long mMinSDCard;
-    private File mFileDirectory;
     private long mCurrentDay;
     private int mSendLogStatusCode;
 
@@ -113,12 +112,7 @@ public class LightThread extends Thread {
         }
     }
 
-
     private void doWriteLog2File(WriteAction action) {
-        if (mFileDirectory == null) {
-            mFileDirectory = new File(mPath);
-        }
-
         if (!isDay()) {
             long tempCurrentDay = CommUtil.getCurrentTime();
             //save时间
