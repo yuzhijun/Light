@@ -9,10 +9,15 @@ import android.widget.Button;
 
 import com.winning.light_core.Light;
 import com.winning.light_core.LightConfig;
+import com.winning.light_core.lightprotocol.TLVDecoder;
 import com.winning.light_core.lightprotocol.TLVManager;
+import com.winning.light_core.lightprotocol.TLVObject;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -21,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         EasyPermissions.RationaleCallbacks{
     private static final String FILE_NAME = "light_v1";
     private Button btnWriteToFile;
+    private Button btnGetFileContent;
+    private Button btnGetAllFile;
     private static final int RC_STORAGE_PERM = 123;
     private static final String[] WRITE_AND_READ_STORAGE =
             {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -45,10 +52,46 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Light.init(config);
 
         btnWriteToFile = findViewById(R.id.btnWriteToFile);
+        btnGetFileContent = findViewById(R.id.btnGetFileContent);
+        btnGetAllFile = findViewById(R.id.btnGetAllFile);
         btnWriteToFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 write2File();
+            }
+        });
+
+        btnGetFileContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                byte[] tlvByteArrays = Light.g("2018-10-22", TLVManager.BATTERY);
+
+                List<List<TLVObject>> tlvObjects = TLVManager.convertSumTagValue(tlvByteArrays, new ArrayList<List<TLVObject>>());
+                for (List<TLVObject> tlvObjects2 : tlvObjects){
+                    for (TLVObject tlvObject : tlvObjects2) {
+                        System.out.println("\n");
+                        System.out.println(TLVDecoder.encodeHexStr(tlvObject.getTagValue(), true));
+
+                        String sssString = null;
+                        try {
+                            sssString = new String(tlvObject.getTagValue(),"utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println(sssString);
+                    }
+                }
+            }
+        });
+
+        btnGetAllFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Long> allFile = Light.getAllFilesInfo();
+
+                for (Map.Entry<String, Long> entry : allFile.entrySet()) {
+                    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                }
             }
         });
     }

@@ -5,7 +5,11 @@ import android.text.TextUtils;
 
 import com.winning.light_core.lightprotocol.TLVManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LightManager {
@@ -85,6 +89,43 @@ public class LightManager {
         }
     }
 
+    byte[] get(String date, int type){
+        if (TextUtils.isEmpty(date)){
+            return null;
+        }
+        File dir = getDir();
+        if (!dir.exists()) {
+            return null;
+        }
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (File file : files) {
+            try {
+                String[] longStrArray = file.getName().split("\\.");
+                if (longStrArray.length > 1 && longStrArray[0].equalsIgnoreCase(date) && longStrArray[1].equalsIgnoreCase(String.valueOf(type))){
+                    InputStream in = new FileInputStream(file);
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[1024 * 4];
+                    int n = 0;
+                    while ((n = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, n);
+                    }
+                   return out.toByteArray();
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            } catch (IOException e2){
+                e2.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
     void send(String dates[], int type ,SendLogRunnable runnable) {
         if (TextUtils.isEmpty(mPath) || dates == null || dates.length == 0) {
             return;
@@ -93,19 +134,17 @@ public class LightManager {
             if (TextUtils.isEmpty(date)) {
                 continue;
             }
-            long time = CommUtil.getDateTime(date);
-            if (time > 0) {
-                LightModel model = new LightModel();
-                SendAction action = new SendAction();
-                model.action = LightModel.Action.SEND;
-                action.date = String.valueOf(time);
-                action.sendLogRunnable = runnable;
-                action.type = type;
-                model.sendAction = action;
-                mCacheLogQueue.add(model);
-                if (mLightThread != null) {
-                    mLightThread.notifyRun();
-                }
+
+            LightModel model = new LightModel();
+            SendAction action = new SendAction();
+            model.action = LightModel.Action.SEND;
+            action.date = date;
+            action.sendLogRunnable = runnable;
+            action.type = type;
+            model.sendAction = action;
+            mCacheLogQueue.add(model);
+            if (mLightThread != null) {
+                mLightThread.notifyRun();
             }
         }
     }
@@ -124,18 +163,15 @@ public class LightManager {
                 continue;
             }
 
-            long time = CommUtil.getDateTime(date);
-            if (time > 0) {
-                LightModel model = new LightModel();
-                FlushAction action = new FlushAction();
-                model.action = LightModel.Action.FLUSH;
-                action.date = date;
-                action.type = type;
-                model.flushAction = action;
-                mCacheLogQueue.add(model);
-                if (mLightThread != null) {
-                    mLightThread.notifyRun();
-                }
+            LightModel model = new LightModel();
+            FlushAction action = new FlushAction();
+            model.action = LightModel.Action.FLUSH;
+            action.date = date;
+            action.type = type;
+            model.flushAction = action;
+            mCacheLogQueue.add(model);
+            if (mLightThread != null) {
+                mLightThread.notifyRun();
             }
         }
     }

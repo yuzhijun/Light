@@ -174,7 +174,7 @@ public class LightThread extends Thread {
     private boolean prepareLogFile(SendAction action) {
         if (isFile(action.date)) { //是否有日期文件
             String src = mPath + File.separator + action.date + "." + action.type + ".log";
-            if (action.date.equals(String.valueOf(CommUtil.getCurrentTime()))) {
+            if (action.date.equals(CommUtil.getCurrentDate())) {
                 doFlushLog2File(action.date, action.type);
                 String des = mPath + File.separator + action.date + "." + action.type + ".copy";
                 if (copyFile(src, des)) {

@@ -19,6 +19,11 @@ public class CommUtil {
         return tempTime;
     }
 
+    public static String getCurrentDate() {
+        long currentTime = System.currentTimeMillis();
+        return sDateFormat.format(new Date(currentTime));
+    }
+
     public static String getDateStr(long time) {
         return sDateFormat.format(new Date(time));
     }

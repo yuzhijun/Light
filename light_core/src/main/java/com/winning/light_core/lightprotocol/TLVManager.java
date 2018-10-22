@@ -77,14 +77,14 @@ public class TLVManager {
 
 	/**
 	 * 将字节数组转化出TLV格式
-	 * @param tagvalue
+	 * @param tagValue
 	 *  		字节数组
 	 * @param tlvSumObjects
 	 * 			用于递归叠加的List
 	 * */
 	public static List<List<TLVObject>> convertSumTagValue(byte[] tagValue, List<List<TLVObject>> tlvSumObjects){
 		byte[] leftByteArray;
-		tlvObjects = new ArrayList<TLVObject>();
+		tlvObjects = new ArrayList<>();
 		if (null != tagValue && tagValue.length >= 1) {
 			//获取长度
 			byte[] subReceiveByte = subBytes(tagValue, 1, tagValue.length -1);

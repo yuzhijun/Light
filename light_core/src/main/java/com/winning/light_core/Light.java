@@ -21,7 +21,15 @@ public class Light {
     }
 
     /**
-     * @param dates   日期数组，格式：“2018-07-27”
+     * @param date 日期，格式"2018-07-27"
+     * @param type 类型
+     * */
+    public static byte[] g(String date, int type){
+        return sLightManager.get(date, type);
+    }
+
+    /**
+     * @param dates   日期数组，格式："2018-07-27"
      * @param runnable 发送操作
      * @brief 发送日志
      */
@@ -52,8 +60,8 @@ public class Light {
         for (File file : files) {
             try {
                 String[] longStrArray = file.getName().split("\\.");
-                if (longStrArray.length > 0){
-                    allFilesInfo.put(CommUtil.getDateStr(Long.parseLong(longStrArray[0])), file.length());
+                if (longStrArray.length > 1){
+                    allFilesInfo.put(longStrArray[0] + "_" + longStrArray[1], file.length());
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
