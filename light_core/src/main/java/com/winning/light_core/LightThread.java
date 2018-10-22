@@ -172,7 +172,7 @@ public class LightThread extends Thread {
      * 发送日志前的预处理操作
      */
     private boolean prepareLogFile(SendAction action) {
-        if (isFile(action.date)) { //是否有日期文件
+        if (isFile(action)) { //是否有日期文件
             String src = mPath + File.separator + action.date + "." + action.type + ".log";
             if (action.date.equals(CommUtil.getCurrentDate())) {
                 doFlushLog2File(action.date, action.type);
@@ -274,12 +274,12 @@ public class LightThread extends Thread {
         return mCurrentDay < currentTime && mCurrentDay + LONG > currentTime;
     }
 
-    private boolean isFile(String name) {
+    private boolean isFile(SendAction action) {
         boolean isExist = false;
         if (TextUtils.isEmpty(mPath)) {
             return false;
         }
-        File file = new File(mPath + File.separator + name);
+        File file = new File(mPath + File.separator + action.date + "." + action.type + ".log");
         if (file.exists() && file.isFile()) {
             isExist = true;
         }

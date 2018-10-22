@@ -16,7 +16,7 @@ public abstract class SendLogRunnable implements Runnable {
      *
      * @param logFile 日志文件
      */
-    public abstract boolean sendLog(File logFile);
+    public abstract void sendLog(File logFile);
 
     public void setSendAction(SendAction action) {
         mSendAction = action;
@@ -38,7 +38,8 @@ public abstract class SendLogRunnable implements Runnable {
             return;
         }
         File file = new File(mSendAction.uploadPath);
-        if (sendLog(file)) {
+        sendLog(file);
+        if (mSendAction.date.equals(String.valueOf(CommUtil.getCurrentTime()))) {
             file.delete();
         }
 
