@@ -4,7 +4,7 @@ public class SendAction {
     long fileSize; //文件大小
     String date; //日期
     String uploadPath;
-    String type;
+    int type;
     SendLogRunnable sendLogRunnable;
 
     boolean isValid() {

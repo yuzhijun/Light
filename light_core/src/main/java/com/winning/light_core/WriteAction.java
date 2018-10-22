@@ -1,18 +1,16 @@
 package com.winning.light_core;
 
-import android.text.TextUtils;
-
 public class WriteAction {
-    String log; //日志
+    byte[] log; //日志
     boolean isMainThread;
     long threadId;
     String threadName = "";
     long localTime;
-    String flag;
+    int type;
 
     boolean isValid() {
         boolean valid = false;
-        if (!TextUtils.isEmpty(log)) {
+        if (null != log && log.length > 0) {
             valid = true;
         }
         return valid;

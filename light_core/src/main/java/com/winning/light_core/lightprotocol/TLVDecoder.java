@@ -1,4 +1,4 @@
-package com.winning.light_core.LightProtocol;
+package com.winning.light_core.lightprotocol;
 
 /**
  * @author yuzhijun TLV解码器

@@ -5,14 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Method;
-import java.nio.CharBuffer;
+import java.nio.BufferOverflowException;
 import java.nio.MappedByteBuffer;
+import java.nio.ReadOnlyBufferException;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 
 public class LightLog {
-    private static final long KB = 1024; //KB
+    private static final long KB = 1; //KB KB = 1024; 1 for test
     private static final String FILE_NAME = "light_cache";
     private static final long DEFAULT_CACHE_SIZE = 10 * KB;
     private static LightLog sLightLog;
@@ -36,8 +36,8 @@ public class LightLog {
         mMaxLogFile = maxLogFile;
     }
 
-    public void flush(String date, String type){
-        if (null == date || null == type){
+    public void flush(String date, int type){
+        if (null == date || -1 == type){
             return;
         }
         String cachePath = mCachePath + File.separator +  FILE_NAME + File.separator + type + ".cache";
@@ -106,8 +106,8 @@ public class LightLog {
 
     }
 
-    public void write(String log, String type){
-        if (null == log || null == type){
+    public void write(byte[] log, int type){
+        if (null == log || -1 == type){
             return;
         }
         String currentDate = CommUtil.getDateStr(System.currentTimeMillis());
@@ -157,12 +157,15 @@ public class LightLog {
             }
 
             long newCacheSize = fci.size();
-            CharBuffer charBuffer = CharBuffer.wrap(log);
-            MappedByteBuffer mbbi = fci.map(FileChannel.MapMode.READ_WRITE, newCacheSize, charBuffer.length());
+            MappedByteBuffer mbbi = fci.map(FileChannel.MapMode.READ_WRITE, newCacheSize, log.length);
             if (mbbi != null) {
-                mbbi.put(Charset.forName("utf-8").encode(charBuffer));
+                mbbi.put(log);
             }
         } catch (java.io.IOException e) {
+            e.printStackTrace();
+        } catch (BufferOverflowException e){
+            e.printStackTrace();
+        } catch (ReadOnlyBufferException e){
             e.printStackTrace();
         } finally {
             try {

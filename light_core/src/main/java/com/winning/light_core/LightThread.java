@@ -131,11 +131,11 @@ public class LightThread extends Thread {
             return;
         }
 
-        LightLog.newInstance().write(action.log, action.flag);
+        LightLog.newInstance().write(action.log, action.type);
     }
 
-    private void doFlushLog2File(String date, String type) {
-        if (null == date || null == type){
+    private void doFlushLog2File(String date, int type) {
+        if (null == date || -1 == type){
             return;
         }
         LightLog.newInstance().flush(date, type);

@@ -3,8 +3,9 @@ package com.winning.light_core;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.winning.light_core.lightprotocol.TLVManager;
+
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class LightManager {
@@ -17,7 +18,6 @@ public class LightManager {
     private long mMaxLogFile;//最大文件大小
     private long mSaveTime; //存储时间
     private LightThread mLightThread;
-    private SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     static LightManager instance(LightConfig config) {
         if (sLoganManager == null) {
@@ -52,35 +52,40 @@ public class LightManager {
         }
     }
 
-    void write(String log, String flag) {
-        if (TextUtils.isEmpty(log)) {
+    <T> void write(T log, int type) {
+        if (null == log) {
             return;
         }
-        LightModel model = new LightModel();
-        model.action = LightModel.Action.WRITE;
-        WriteAction action = new WriteAction();
-        String threadName = Thread.currentThread().getName();
-        long threadLog = Thread.currentThread().getId();
-        boolean isMain = false;
-        if (Looper.getMainLooper() == Looper.myLooper()) {
-            isMain = true;
-        }
-        action.log = log;
-        action.localTime = System.currentTimeMillis();
-        action.flag = flag;
-        action.isMainThread = isMain;
-        action.threadId = threadLog;
-        action.threadName = threadName;
-        model.writeAction = action;
-        if (mCacheLogQueue.size() < mMaxQueue) {
-            mCacheLogQueue.add(model);
-            if (mLightThread != null) {
-                mLightThread.notifyRun();
+
+        try {
+            LightModel model = new LightModel();
+            model.action = LightModel.Action.WRITE;
+            WriteAction action = new WriteAction();
+            String threadName = Thread.currentThread().getName();
+            long threadLog = Thread.currentThread().getId();
+            boolean isMain = false;
+            if (Looper.getMainLooper() == Looper.myLooper()) {
+                isMain = true;
             }
+            action.log = TLVManager.convertModel2ByteArray(log, type);
+            action.localTime = System.currentTimeMillis();
+            action.type = type;
+            action.isMainThread = isMain;
+            action.threadId = threadLog;
+            action.threadName = threadName;
+            model.writeAction = action;
+            if (mCacheLogQueue.size() < mMaxQueue) {
+                mCacheLogQueue.add(model);
+                if (mLightThread != null) {
+                    mLightThread.notifyRun();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    void send(String dates[],String type ,SendLogRunnable runnable) {
+    void send(String dates[], int type ,SendLogRunnable runnable) {
         if (TextUtils.isEmpty(mPath) || dates == null || dates.length == 0) {
             return;
         }
@@ -109,7 +114,7 @@ public class LightManager {
         return new File(mPath);
     }
 
-    void flush(String[] dates, String type) {
+    void flush(String[] dates, int type) {
         if (TextUtils.isEmpty(mPath)|| dates == null || dates.length == 0) {
             return;
         }

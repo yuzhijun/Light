@@ -1,4 +1,4 @@
-package com.winning.light_core.LightProtocol;
+package com.winning.light_core.lightprotocol;
 
 import java.io.Serializable;
 /**

@@ -13,12 +13,11 @@ public class Light {
     }
 
     /**
-     * @param log  表示日志内容
-     * @param type 表示日志类型 "crash" 或者 "device"
-     * @brief Logan写入日志
-     */
-    public static void w(String log, String type) {
-        sLightManager.write(log, type);
+     * @param t 要存储的性能实体
+     * @param type 类型
+     * */
+    public static <T> void w(T t, int type){
+        sLightManager.write(t, type);
     }
 
     /**
@@ -26,14 +25,14 @@ public class Light {
      * @param runnable 发送操作
      * @brief 发送日志
      */
-    public static void s(String dates[], String type, SendLogRunnable runnable) {
+    public static void s(String dates[], int type, SendLogRunnable runnable) {
         sLightManager.send(dates, type, runnable);
     }
 
     /**
      * @brief 立即写入日志文件
      */
-    public static void f(String dates[], String type) {
+    public static void f(String dates[], int type) {
         sLightManager.flush(dates, type);
     }
 
