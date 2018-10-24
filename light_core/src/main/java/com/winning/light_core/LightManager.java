@@ -110,7 +110,7 @@ public class LightManager {
                     InputStream in = new FileInputStream(file);
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     byte[] buffer = new byte[1024 * 4];
-                    int n = 0;
+                    int n;
                     while ((n = in.read(buffer)) != -1) {
                         out.write(buffer, 0, n);
                     }
