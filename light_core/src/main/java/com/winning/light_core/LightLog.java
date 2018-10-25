@@ -138,6 +138,10 @@ public class LightLog {
     }
 
     private String getCachePath(int type){
+        if (null == mCachePath || "".equals(mCachePath)){
+            throw new RuntimeException("init method is not invoked");
+        }
+
         return mCachePath + File.separator +  FILE_NAME + File.separator + type + ".cache";
     }
 
