@@ -132,6 +132,8 @@ public class LightThread extends Thread {
         }
 
         LightLog.newInstance().write(action.log, action.type);
+        //设置WriteAction为空闲
+        action.isIdle.set(true);
     }
 
     private void doFlushLog2File(String date, int type) {

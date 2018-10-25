@@ -64,7 +64,7 @@ public class LightManager {
         try {
             LightModel model = new LightModel();
             model.action = LightModel.Action.WRITE;
-            WriteAction action = new WriteAction();
+            WriteAction action = WriteAction.obtain();
             String threadName = Thread.currentThread().getName();
             long threadLog = Thread.currentThread().getId();
             boolean isMain = false;
