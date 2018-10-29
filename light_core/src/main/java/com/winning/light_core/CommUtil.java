@@ -37,4 +37,8 @@ public class CommUtil {
         }
         return tempTime;
     }
+
+    public static boolean isEmptyStr(String str){
+        return null == str || "".equals(str);
+    }
 }

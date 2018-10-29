@@ -21,6 +21,12 @@ public class LightLog {
     private ConcurrentHashMap<Integer, MappedByteBuffer> mmapHashMap = new ConcurrentHashMap<>();
     private long mMaxLogFile;
 
+    private LightLog(){
+        if(CommUtil.isEmptyStr(mCachePath) || CommUtil.isEmptyStr(mPath)){
+            throw new RuntimeException("init method is not invoked");
+        }
+    }
+
     public static LightLog newInstance() {
         if (sLightLog == null) {
             synchronized (LightLog.class) {
